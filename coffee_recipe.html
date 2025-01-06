@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Coffee Recipe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .ingredient {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .ingredient button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .actions button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .actions button.export {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .actions button.reset {
+            background-color: #f44336;
+            color: white;
+        }
+        .recipe-output {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+        }
+        .login {
+            margin-top: 20px;
+        }
+        .login input {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .notification {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Make Your Custom Coffee Recipe</h1>
+    <div class="container">
+        <form id="recipe-form">
+            <div class="ingredient">
+                <label for="espresso">Espresso (shots):</label>
+                <button type="button" onclick="increment('espresso')">+</button>
+                <button type="button" onclick="decrement('espresso')">-</button>
+                <input type="number" id="espresso" name="espresso" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="milk">Milk (cups):</label>
+                <button type="button" onclick="increment('milk')">+</button>
+                <button type="button" onclick="decrement('milk')">-</button>
+                <input type="number" id="milk" name="milk" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="chocolate">Chocolate (tbsp):</label>
+                <button type="button" onclick="increment('chocolate')">+</button>
+                <button type="button" onclick="decrement('chocolate')">-</button>
+                <input type="number" id="chocolate" name="chocolate" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="sugar">Sugar (tsp):</label>
+                <button type="button" onclick="increment('sugar')">+</button>
+                <button type="button" onclick="decrement('sugar')">-</button>
+                <input type="number" id="sugar" name="sugar" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="oatmilk">Oatmilk (cups):</label>
+                <button type="button" onclick="increment('oatmilk')">+</button>
+                <button type="button" onclick="decrement('oatmilk')">-</button>
+                <input type="number" id="oatmilk" name="oatmilk" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="matcha">Matcha (tsp):</label>
+                <button type="button" onclick="increment('matcha')">+</button>
+                <button type="button" onclick="decrement('matcha')">-</button>
+                <input type="number" id="matcha" name="matcha" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="vanilla">Vanilla Syrup (tsp):</label>
+                <button type="button" onclick="increment('vanilla')">+</button>
+                <button type="button" onclick="decrement('vanilla')">-</button>
+                <input type="number" id="vanilla" name="vanilla" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="arenga">Arenga Sugar (tsp):</label>
+                <button type="button" onclick="increment('arenga')">+</button>
+                <button type="button" onclick="decrement('arenga')">-</button>
+                <input type="number" id="arenga" name="arenga" min="0" value="0">
+            </div>
+            <div class="ingredient">
+                <label for="creamer">Creamer (tsp):</label>
+                <button type="button" onclick="increment('creamer')">+</button>
+                <button type="button" onclick="decrement('creamer')">-</button>
+                <input type="number" id="creamer" name="creamer" min="0" value="0">
+            </div>
+        </form>
+
+        <div class="login">
+            <h3>Log In to Export</h3>
+            <input type="text" id="name" placeholder="Your Name (required)">
+            <input type="tel" id="phone" placeholder="Your Phone Number (optional)">
+            <input type="email" id="email" placeholder="Your Email (optional)">
+        </div>
+
+        <div class="actions">
+            <button type="button" class="export" onclick="exportRecipe()">Export Recipe</button>
+            <button type="reset" class="reset">Reset</button>
+        </div>
+
+        <div class="recipe-output" id="recipe-output">
+            <h3>Your Recipe:</h3>
+            <p id="recipe-preview">No ingredients added yet.</p>
+        </div>
+    </div>
+
+    <div class="notification" id="notification" style="display:none;">
+        <p id="notification-message"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('recipe-form');
+        const recipeOutput = document.getElementById('recipe-output');
+        const recipePreview = document.getElementById('recipe-preview');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+
+        form.addEventListener('input', updateRecipe);
+
+        function updateRecipe() {
+            const formData = new FormData(form);
+            const ingredients = [];
+
+            for (const [key, value] of formData.entries()) {
+                if (value > 0) {
+                    ingredients.push(`${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`);
+                }
+            }
+
+            recipePreview.textContent = ingredients.length > 0
+                ? ingredients.join(', ')
+                : 'No ingredients added yet.';
+        }
+
+        function increment(id) {
+            const input = document.getElementById(id);
+            input.value = parseInt(input.value) + 1;
+            updateRecipe();
+        }
+
+        function decrement(id) {
+            const input = document.getElementById(id);
+            if (parseInt(input.value) > 0) {
+                input.value = parseInt(input.value) - 1;
+                updateRecipe();
+            }
+        }
+
+        function exportRecipe() {
+            const name = document.getElementById('name').value.trim();
+
+            if (!name) {
+                alert('Please enter your name to export the recipe.');
+                return;
+            }
+
+            const recipeText = recipePreview.textContent;
+
+            if (recipeText === 'No ingredients added yet.') {
+                alert('Please add some ingredients before exporting!');
+                return;
+            }
+
+            const blob = new Blob([recipeText], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'My_Coffee_Recipe.txt';
+            link.click();
+
+            const phone = document.getElementById('phone').value.trim();
+            const message = phone
+                ? `Thanks, ${name}! We’ll contact you soon to process your special recipe.`
+                : `Thanks, ${name}! Please reach out if you have any questions.`;
+            notificationMessage.textContent = message;
+            notification.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
